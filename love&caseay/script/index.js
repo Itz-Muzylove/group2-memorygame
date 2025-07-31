@@ -1,37 +1,36 @@
 const gameContainer = document.getElementById('card-holder');
-const score = document.getElementById('score');
-const message = document.getElementById('message');
+    const message = document.getElementById('message');
 
-//List of cards
-const cardValues = ['2', '4', '6', '8', 'G', 'F', 'L', 'A'];
-const card = [...cardValues, ...cardValues]; //Duplicate CardValue
+    // List of card values (pairs)
+    const cardValues = ['2', '4', '6', '8', 'G', 'C', 'L', 'A'];
+    const cards = [...cardValues, ...cardValues]; // Duplicate for pairs
 
-//Shuffle the cards
-function shuffle(array) {
-    for (let i = array.length -1; i>0; i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [array[i], array[j]] = [array[i], array[j]];
+    // Shuffle the cards
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
-}
-shuffle(cards);
+    shuffle(cards);
 
-//Create cards
-let firstCard = null;
-let secondCard = null;
-let matchedCount = 0;
+    // Create the cards
+    let firstCard = null;
+    let secondCard = null;
+    let matchedCount = 0;
 
-function createCard(value) {
-    const card = document.createElement('div');
-    card.classList.add('card');
-    card.dataset.value = value;
+    function createCard(value) {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.dataset.value = value;
 
-    const content = document.createElement('div');
-    card.textContent.add('card');
-    content.classList.add('hidden');
-    card.appendChild(content);
+      const content = document.createElement('div');
+      content.textContent = value;
+      content.classList.add('hidden');
+      card.appendChild(content);
 
-    card.addEventListener('click', () => {
-        if (card.classList.contains('flipped') || card.classList.constains('matched')) return;
+      card.addEventListener('click', () => {
+        if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
 
         card.classList.add('flipped');
         content.classList.remove('hidden');
@@ -45,7 +44,8 @@ function createCard(value) {
       });
 
       return card;
-}
+    }
+
     // Check if two cards match
     function checkMatch() {
       if (firstCard.dataset.value === secondCard.dataset.value) {
@@ -59,7 +59,7 @@ function createCard(value) {
 
         // Check if the game is won
         if (matchedCount === cards.length) {
-          message.textContent = 'Congrats You won 🎉';
+          message.textContent = 'You Win! 🎉';
         }
       } else {
         // Flip cards back after a short delay
@@ -91,3 +91,4 @@ function createCard(value) {
 
     // Start the game
     initializeGame();
+  

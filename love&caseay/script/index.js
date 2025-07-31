@@ -59,7 +59,7 @@ const gameContainer = document.getElementById('card-holder');
 
         // Check if the game is won
         if (matchedCount === cards.length) {
-          message.textContent = 'You Win! 🎉';
+          message.textContent = 'Congrats, You Won! 🎉';
         }
       } else {
         // Flip cards back after a short delay

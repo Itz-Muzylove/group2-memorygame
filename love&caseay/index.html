@@ -7,11 +7,55 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container" id="card-holder"></div>
-    <h1 id="score"></h1>
+    
+    <h1 class="game-title">
+      Memory Match Challenge<br>
+      <span class="tagline">Flip, Match & Win!</span>
+    </h1>
+
+
+    <div class="stats">
+      <p><strong>Score:</strong> <span id="score">0</span></p>
+      <p><strong>Time:</strong> <span id="timer">00:00</span></p>
+      
+    </div>
+    <div class="container" id="card-holder">
+        
+    </div>
+    <button id="restart-btn">Restart Game</button>
     <div class="mesage">
         <p id="message"></p>
     </div>
+    <div id="win-popup" class="popup hidden">
+  <div class="popup-content">
+    <h2>Congratulations! <span id="greeting"></span></h2>
+    <p>You matched all the cards in <span id="final-time"></span>!</p>
+    <button id="popup-restart-btn">Play Again</button>
+  </div>
+</div>
+<div id="welcome-overlay" class="overlay">
+  <div class="overlay-content">
+    <h2>Welcome to Memory Match Challenge</h2>
+    <p><strong>How to Play:</strong></p>
+    <ul>
+      <li>Flip two cards to find a matching pair.</li>
+      <li>If they match, they stay flipped.</li>
+      <li>Match all pairs to win!</li>
+    </ul>
+    <p><strong>Scoring:</strong></p>
+    <ul>
+      <li>Start with 5 points.</li>
+      <li>+5 points for each correct match.</li>
+      <li>−2 points for each wrong match.</li>
+    </ul>
+    <form action="">
+        <label for="player-name">Enter your name:</label>
+    <input type="text" id="player-name" placeholder="Your Name" required>
+    <button id="start-btn" type="submit">Start Game</button>
+    </form>
+  </div>
+</div>
+
     <script src="./script/index.js"></script>
 </body>
 </html>

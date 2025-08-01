@@ -1,94 +1,181 @@
 const gameContainer = document.getElementById('card-holder');
-    const message = document.getElementById('message');
+const scoreDisplay = document.getElementById('score');
+const timerDisplay = document.getElementById('timer');
+const message = document.getElementById('message');
+const restartBtn = document.getElementById('restart-btn');
+const popup = document.getElementById('win-popup');
+const popupRestartBtn = document.getElementById('popup-restart-btn');
+const finalTime = document.getElementById('final-time');
+const welcomeOverlay = document.getElementById('welcome-overlay');
+const startBtn = document.getElementById('start-btn');
+const playerNameInput = document.getElementById('player-name');
+let playerName = "";
 
-    // List of card values (pairs)
-    const cardValues = ['2', '4', '6', '8', 'G', 'C', 'L', 'A'];
-    const cards = [...cardValues, ...cardValues]; // Duplicate for pairs
 
-    // Shuffle the cards
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
+const cardValues = ['2', '4', '6', '8', 'G', 'F', 'L', 'A'];
+let cards = [...cardValues, ...cardValues];
+
+let firstCard = null;
+let secondCard = null;
+let matchedCount = 0;
+let score = 5;
+let timerInterval;
+let secondsElapsed = 0;
+let timerStarted = false;
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function updateScore() {
+  scoreDisplay.textContent = score;
+
+  // Turn red if score is negative
+  if (score < 0) {
+    scoreDisplay.classList.add('negative');
+  } else {
+    scoreDisplay.classList.remove('negative');
+  }
+}
+
+function updateTimer() {
+  const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+  const secs = String(secondsElapsed % 60).padStart(2, '0');
+  timerDisplay.textContent = `${mins}:${secs}`;
+}
+
+function startTimer() {
+  secondsElapsed = 0;
+  updateTimer();
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    updateTimer();
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function createCard(value) {
+  const card = document.createElement('div');
+  card.classList.add('card');
+
+  const inner = document.createElement('div');
+  inner.classList.add('card-inner');
+
+  const front = document.createElement('div');
+  front.classList.add('card-front');
+  front.textContent = value;
+
+  const back = document.createElement('div');
+  back.classList.add('card-back');
+
+  inner.appendChild(front);
+  inner.appendChild(back);
+  card.appendChild(inner);
+
+  card.dataset.value = value;
+
+  card.addEventListener('click', () => {
+    if (card.classList.contains('flipped') || secondCard) return;
+
+    if (!timerStarted) {
+      startTimer();
+      timerStarted = true;
     }
-    shuffle(cards);
 
-    // Create the cards
-    let firstCard = null;
-    let secondCard = null;
-    let matchedCount = 0;
+    card.classList.add('flipped');
 
-    function createCard(value) {
-      const card = document.createElement('div');
-      card.classList.add('card');
-      card.dataset.value = value;
+    if (!firstCard) {
+      firstCard = card;
+    } else {
+      secondCard = card;
+      checkMatch();
+    }
+  });
 
-      const content = document.createElement('div');
-      content.textContent = value;
-      content.classList.add('hidden');
-      card.appendChild(content);
+  return card;
+}
 
-      card.addEventListener('click', () => {
-        if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+function checkMatch() {
+  const val1 = firstCard.dataset.value;
+  const val2 = secondCard.dataset.value;
 
-        card.classList.add('flipped');
-        content.classList.remove('hidden');
+  if (val1 === val2) {
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    firstCard = null;
+    secondCard = null;
+    matchedCount += 2;
 
-        if (!firstCard) {
-          firstCard = card;
-        } else if (!secondCard) {
-          secondCard = card;
-          checkMatch();
-        }
-      });
+    score += 5;
+    updateScore();
 
-      return card;
+    if (matchedCount === cards.length) {
+      stopTimer();
+      finalTime.textContent = timerDisplay.textContent;
+      popup.classList.remove('hidden');
     }
 
-    // Check if two cards match
-    function checkMatch() {
-      if (firstCard.dataset.value === secondCard.dataset.value) {
-        firstCard.classList.add('matched');
-        secondCard.classList.add('matched');
-        matchedCount += 2;
+  } else {
+    score -= 2;
+    updateScore();
 
-        // Reset card selection
-        firstCard = null;
-        secondCard = null;
-
-        // Check if the game is won
-        if (matchedCount === cards.length) {
-          message.textContent = 'Congrats, You Won! 🎉';
-        }
-      } else {
-        // Flip cards back after a short delay
-        setTimeout(() => {
-          firstCard.classList.remove('flipped');
-          secondCard.classList.remove('flipped');
-          firstCard.querySelector('div').classList.add('hidden');
-          secondCard.querySelector('div').classList.add('hidden');
-          firstCard = null;
-          secondCard = null;
-        }, 1000);
-      }
-    }
-
-    // Initialize the game
-    function initializeGame() {
-      gameContainer.innerHTML = '';
-      message.textContent = '';
-      matchedCount = 0;
+    setTimeout(() => {
+      firstCard.classList.remove('flipped');
+      secondCard.classList.remove('flipped');
       firstCard = null;
       secondCard = null;
+    }, 1000);
+  }
+}
 
-      shuffle(cards);
-      cards.forEach(value => {
-        const card = createCard(value);
-        gameContainer.appendChild(card);
-      });
-    }
+function initializeGame() {
+  gameContainer.innerHTML = '';
+  message.textContent = '';
+  message.classList.remove("win");
+  document.body.classList.remove("win");
+  popup.classList.add('hidden');
 
-    // Start the game
-    initializeGame();
-  
+  score = 5;
+  updateScore();
+
+  matchedCount = 0;
+  firstCard = null;
+  secondCard = null;
+
+  clearInterval(timerInterval);
+  secondsElapsed = 0;
+  updateTimer();
+  timerStarted = false;
+
+  shuffle(cards);
+  cards.forEach(value => {
+    const card = createCard(value);
+    gameContainer.appendChild(card);
+  });
+}
+
+restartBtn.addEventListener('click', () => {
+  cards = [...cardValues, ...cardValues];
+  initializeGame();
+});
+
+popupRestartBtn.addEventListener('click', () => {
+  cards = [...cardValues, ...cardValues];
+  initializeGame();
+});
+
+startBtn.addEventListener('click', () => {
+  playerName = playerNameInput.value.trim() || "Player";
+  document.getElementById('greeting').textContent = `${playerName}!.`;
+  welcomeOverlay.style.display = 'none';
+  initializeGame();
+});
+
+
+initializeGame();

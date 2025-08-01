@@ -3,7 +3,8 @@ body {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      text-align: center;
+      height: 100dvh;
       margin: 0;
       background: url(5916796.jpg);
       background-size: cover;
@@ -16,6 +17,7 @@ body {
       justify-content: space-between;
       grid-template-columns: repeat(4, 100px);
       grid-gap: 15px;
+      align-self: center;
     }
 
 
@@ -49,6 +51,7 @@ body {
     }
 .matched {
       background: url(img2.jpg);
+      /*background-attachment: fixed;*/
       color: white;
     }
 
@@ -75,4 +78,19 @@ body {
       position: fixed;
       bottom: 20px;
       margin-right: 50px;
+    }
+
+    @media(max-width: 720px) {
+      .container {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .card {
+        width: 80px;
+        height: 100px;
+        font-size: 24px;
+      }
+      body {
+        background-size: cover;
+        background-position: center;
+      }
     }

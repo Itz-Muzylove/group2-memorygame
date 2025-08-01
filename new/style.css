@@ -131,10 +131,10 @@ body.win {
   transform: rotateY(180deg);
 }
 
-.card.matched .card-inner {
+/*.card.matched .card-inner {
   opacity: 0.6;
   pointer-events: none;
-}
+}*/
 
 
 @keyframes matchBounce {
